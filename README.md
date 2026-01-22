@@ -90,7 +90,7 @@ curl -X POST http://localhost:8008/start_instance \
     "container_name": "xingyaoww/sweb.eval.x86_64.python_s_mypy-5617:latest",
     "run_id": "eval-run-001",
     "environment_config": {
-      "environment_class": "docker",
+      "container_type": "docker",
       "image": "xingyaoww/sweb.eval.x86_64.python_s_mypy-5617:latest"
     }
   }'

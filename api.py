@@ -28,7 +28,7 @@ def create_app(runner: BaseRunner, environments: Dict[str, Dict[str, Any]] = {})
                 env_config = environments[request.container_name]
                 # If the config is just a string, assume it's a docker image name
                 if isinstance(env_config, str):
-                    env_config = {"environment_class": "docker", "image": env_config}
+                    env_config = {"container_type": "docker", "image": env_config}
                 
                 # If the request provides overrides or additional config, merge them
                 if request.environment_config:

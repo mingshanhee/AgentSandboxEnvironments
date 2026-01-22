@@ -29,5 +29,5 @@ def get_environment_class(spec: str) -> type[Environment]:
 
 def get_environment(config: dict, *, default_type: str = "") -> Environment:
     config = copy.deepcopy(config)
-    environment_class = config.pop("environment_class", default_type)
-    return get_environment_class(environment_class)(**config)
+    container_type = config.pop("container_type", default_type)
+    return get_environment_class(container_type)(**config)

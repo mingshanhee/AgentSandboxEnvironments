@@ -15,7 +15,7 @@ def app():
         
         runner = LocalRunner({"instances": 2})
         # Define some pre-existing environments config if needed, or pass empty
-        flask_app = create_app(runner, environments={"test-env": {"environment_class": "local"}})
+        flask_app = create_app(runner, environments={"test-env": {"container_type": "local"}})
         yield flask_app
 
 def test_start_instance(app):
@@ -65,13 +65,13 @@ def test_resource_limits_api(app):
     assert resp.json()["instances"] == 1
     
     # Start 2nd
-    client.post("/start_instance", json={"container_name": "test-env-2", "run_id": "run-2", "environment_config": {"environment_class": "local"}})
+    client.post("/start_instance", json={"container_name": "test-env-2", "run_id": "run-2", "environment_config": {"container_type": "local"}})
     
     resp = client.get("/get_available_resources")
     assert resp.json()["instances"] == 0
     
     # Start 3rd -> Should fail 500
-    resp = client.post("/start_instance", json={"container_name": "test-env-3", "run_id": "run-3", "environment_config": {"environment_class": "local"}})
+    resp = client.post("/start_instance", json={"container_name": "test-env-3", "run_id": "run-3", "environment_config": {"container_type": "local"}})
     assert resp.status_code == 500 
     
     # Close one
