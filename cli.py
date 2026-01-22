@@ -7,7 +7,7 @@ from runners.slurm import SlurmRunner
 from api import create_app
 
 def main():
-    parser = argparse.ArgumentParser(description="Agent Resource Engine CLI")
+    parser = argparse.ArgumentParser(description="Agent Rollout Service CLI")
     parser.add_argument("--runner", choices=["local", "slurm"], required=True, help="Runner type")
     parser.add_argument("--port", type=int, default=8000, help="Port to run the API on")
     parser.add_argument("--max-resources", type=str, default='{"instances": 10}', help="JSON string for max resources")

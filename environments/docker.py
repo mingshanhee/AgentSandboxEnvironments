@@ -45,7 +45,7 @@ class DockerEnvironment(Environment):
         """This class executes bash commands in a Docker container using direct docker commands.
         See `DockerEnvironmentConfig` for keyword arguments.
         """
-        self.logger = logger or logging.getLogger("agent_resource_engine.environment")
+        self.logger = logger or logging.getLogger("agent_rollout_service.environment")
         self.container_id: str | None = None
         self.config = config_class(**kwargs)
         self._start_container()
@@ -55,7 +55,7 @@ class DockerEnvironment(Environment):
 
     def _start_container(self):
         """Start the Docker container and return the container ID."""
-        container_name = f"agent-resource-engine-{uuid.uuid4().hex[:8]}"
+        container_name = f"agent-rollout-service-{uuid.uuid4().hex[:8]}"
         cmd = [
             self.config.executable,
             "run",

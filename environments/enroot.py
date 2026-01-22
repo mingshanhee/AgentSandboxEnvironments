@@ -33,7 +33,7 @@ class EnrootEnvironment(Environment):
         """This class executes bash commands in an Enroot container.
         See `EnrootEnvironmentConfig` for keyword arguments.
         """
-        self.logger = logger or logging.getLogger("agent_resource_engine.environment")
+        self.logger = logger or logging.getLogger("agent_rollout_service.environment")
         self.config = config_class(**kwargs)
         self.container_name: str | None = None
         self._setup_container()
@@ -64,7 +64,7 @@ class EnrootEnvironment(Environment):
         else:
             self.logger.info(f"Image already present '{self.config.image}'")
 
-        self.container_name = f"agent-resource-engine-{uuid.uuid4().hex[:8]}"
+        self.container_name = f"agent-rollout-service-{uuid.uuid4().hex[:8]}"
         create_cmd = [
             self.config.executable,
             "create",

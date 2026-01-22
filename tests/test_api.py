@@ -16,7 +16,7 @@ def app():
         runner = LocalRunner({"instances": 2})
         # Define some pre-existing environments config if needed, or pass empty
         flask_app = create_app(runner, environments={"test-env": {"environment_class": "local"}})
-        return flask_app
+        yield flask_app
 
 def test_start_instance(app):
     client = TestClient(app)

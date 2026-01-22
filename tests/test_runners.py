@@ -55,6 +55,7 @@ def test_local_runner_execution(mock_get_environment):
 def test_slurm_runner(mock_run):
     # Mock sbatch success
     mock_run.return_value.stdout = "12345"
+    mock_run.return_value.stderr = ""
     mock_run.return_value.returncode = 0
     
     runner = SlurmRunner({"jobs": 5})

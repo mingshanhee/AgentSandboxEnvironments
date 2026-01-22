@@ -1,6 +1,6 @@
-# Agent Resource Engine
+# Agent Rollout Service
 
-The Agent Resource Engine is a service designed to manage containerized environments and execute commands within them, supporting both local and HPC (Slurm) execution contexts. It exposes a REST API for clients to interact with these resources.
+The Agent Rollout Service is a service designed to manage containerized environments and execute commands within them, supporting both local and HPC (Slurm) execution contexts. It exposes a REST API for clients to interact with these resources.
 
 ## Folder Structure
 
@@ -12,7 +12,7 @@ The Agent Resource Engine is a service designed to manage containerized environm
     - `Environment`: Base class for all environments.
     - Implementations include `docker`, `singularity`, `enroot`, and `local` execution.
     - `extra/`: Contains additional experimental environments (e.g., `bubblewrap`).
-- **`models/`**: (Optional) wrappers for LLM interactions if the engine needs to perform model inference or cost tracking internally.
+- **`models/`**: (Optional) wrappers for LLM interactions if the service needs to perform model inference or cost tracking internally.
     - Includes support for `litellm`, `anthropic`, `openrouter`, etc.
     - Removed external dependencies to make it standalone.
 - **`tests/`**: Contains `pytest` test suites for runners and the API.
@@ -27,16 +27,16 @@ Install the package (editable mode recommended for development):
 pip install -e .
 ```
 
-This installs the `arengine` command.
+This installs the `arservice` command.
 
 ## Usage
 
-Start the engine using the `arengine` CLI.
+Start the service using the `arservice` CLI.
 
 ### Command Syntax
 
 ```bash
-arengine --runner <local|slurm> [OPTIONS]
+arservice --runner <local|slurm> [OPTIONS]
 ```
 
 ### Options
@@ -54,14 +54,14 @@ arengine --runner <local|slurm> [OPTIONS]
 Allows up to 5 concurrent instances.
 
 ```bash
-arengine --runner local --max-resources '{"instances": 5}'
+arservice --runner local --max-resources '{"instances": 5}'
 ```
 
 **Start a Slurm Runner:**
 Allows up to 20 concurrent jobs.
 
 ```bash
-arengine --runner slurm --max-resources '{"jobs": 20}'
+arservice --runner slurm --max-resources '{"jobs": 20}'
 ```
 
 ## API Endpoints

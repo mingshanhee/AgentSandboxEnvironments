@@ -3,9 +3,9 @@ requires = ["setuptools>=42", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "agent-resource-engine"
+name = "agent-rollout-service"
 version = "0.1.0"
-description = "Agent Resource Engine CLI and API"
+description = "Agent Rollout Service CLI and API"
 authors = [{name = "Antigravity", email = "antigravity@example.com"}]
 license = {text = "MIT"}
 readme = "README.md"
@@ -17,13 +17,13 @@ dependencies = [
     "requests",
     "tenacity",
     "litellm",
-    # Optional dependencies that were seen in imports but might not be strict requirements for core engine
+    # Optional dependencies that were seen in imports but might not be strict requirements for core service
     # "portkey-ai", # for PortkeyModel
     # "swerex",     # for Swerex environments
 ]
 
 [project.scripts]
-arengine = "cli:main"
+arservice = "cli:main"
 
 [project.optional-dependencies]
 test = [

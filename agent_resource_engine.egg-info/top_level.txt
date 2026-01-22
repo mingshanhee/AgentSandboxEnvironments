@@ -1,6 +1,0 @@
-api
-cli
-environments
-models
-runners
-tests

@@ -71,9 +71,9 @@ class BubblewrapEnvironment(Environment):
         """This class executes bash commands in a bubblewrap environment and a separate working
         directory for each environment. See `BubblewrapEnvironmentConfig` for kwargs.
         """
-        self.logger = logger or logging.getLogger("agent_resource_engine.environment")
+        self.logger = logger or logging.getLogger("agent_rollout_service.environment")
         self.config = config_class(**kwargs)
-        self.working_dir = Path(tempfile.gettempdir()) / f"agent-resource-engine-{uuid.uuid4().hex[:8]}"
+        self.working_dir = Path(tempfile.gettempdir()) / f"agent-rollout-service-{uuid.uuid4().hex[:8]}"
         self.working_dir.mkdir(parents=True)
 
     def execute(self, command: str, cwd: str = "", *, timeout: int | None = None) -> dict[str, Any]:
