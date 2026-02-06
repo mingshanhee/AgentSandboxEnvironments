@@ -45,8 +45,19 @@ arservice --runner <local|slurm> [OPTIONS]
 |--------|-------------|---------|
 | `--runner` | **Required**. Type of runner to use: `local` or `slurm`. | - |
 | `--port` | Port to run the HTTP API on. | `8008` |
-| `--max-resources` | JSON string defining maximum available resources. | `{"instances": 10}` |
+| `--max-resources` | JSON string defining maximum available resources (e.g., `{"instances": 10, "cpus": 40}`). Only keys defined here are strictly enforced; others are allowed but ignored for accounting. | `{"instances": 10}` |
 | `--environments` | Path to a JSON file containing pre-defined environment configurations. | `None` |
+
+### Resource Management
+
+The service performs admission control based on the resources defined in `--max-resources`. 
+- **Enforced Resources**: If a request (via `environment_config.resources`) asks for a resource key that is present in the server's `--max-resources`, the service ensures there is enough remaining capacity.
+- **Untracked Resources**: Resource types (like `cpus`, `memory`, or `gpus`) can be included in request payloads even if the server is not configured to track them. These will be passed through to the underlying environment (e.g., Docker) but will not be used for admission control or resource accounting in the service itself.
+
+Example starting with CPU and memory tracking:
+```bash
+arservice --runner local --max-resources '{"instances": 10, "cpus": 32, "memory_gb": 128}'
+```
 
 ### Examples
 
@@ -198,3 +209,19 @@ curl http://localhost:8008/get_available_resources
 }
 ```
 </details>
+
+## Monitoring
+
+### Polling Stats
+
+The service includes a `poll.py` utility for monitoring active instances and resource usage in real-time.
+
+```bash
+python poll.py --url http://localhost:8008 --list
+```
+
+**Options:**
+- `--url`: Base URL of the service.
+- `--list`: Show a detailed table of active instances (run ID, container, start time).
+- `--interval`: Refresh rate in seconds (default: 1.0).
+- `--raw`: Print the raw JSON response from the `/stats` endpoint.

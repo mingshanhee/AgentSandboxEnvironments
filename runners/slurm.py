@@ -14,7 +14,7 @@ class SlurmRunner(BaseRunner):
     def start_instance(self, container_name: str, run_id: str, environment_config: Dict[str, Any]) -> str:
         """Starts a Slurm job instance."""
         # Check resources (simplified: assume 1 unit of 'jobs' unless specified)
-        needed_resources = environment_config.get("resources", {"jobs": 1})
+        needed_resources = environment_config.get("resources", {"instances": 1})
         if not self._check_resources(needed_resources):
             raise RuntimeError(f"Not enough resources. Available: {self.get_available_resources()}")
 

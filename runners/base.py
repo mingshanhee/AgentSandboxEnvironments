@@ -35,16 +35,18 @@ class BaseRunner(ABC):
         """Checks if enough resources are available."""
         available = self.get_available_resources()
         for key, value in required_resources.items():
-            if available.get(key, 0) < value:
+            if key in self.max_resources and available.get(key, 0) < value:
                 return False
         return True
 
     def _allocate_resources(self, resources: Dict[str, Any]):
         """Allocates resources."""
         for key, value in resources.items():
-            self.allocated_resources[key] = self.allocated_resources.get(key, 0) + value
+            if key in self.max_resources:
+                self.allocated_resources[key] = self.allocated_resources.get(key, 0) + value
 
     def _release_resources(self, resources: Dict[str, Any]):
         """Releases resources."""
         for key, value in resources.items():
-            self.allocated_resources[key] = max(0, self.allocated_resources.get(key, 0) - value)
+            if key in self.max_resources:
+                self.allocated_resources[key] = max(0, self.allocated_resources.get(key, 0) - value)

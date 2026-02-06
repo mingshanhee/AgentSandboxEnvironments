@@ -1,7 +1,14 @@
-from fastapi import FastAPI, HTTPException
+import time
+import logging
+from fastapi import FastAPI, HTTPException, Query
 from pydantic import BaseModel
-from typing import Any, Dict
+from typing import Any, Dict, List, Optional
 from runners.base import BaseRunner
+
+
+class EndpointFilter(logging.Filter):
+    def filter(self, record: logging.LogRecord) -> bool:
+        return record.getMessage().find("GET /stats") == -1
 
 
 class StartInstanceRequest(BaseModel):
@@ -19,6 +26,7 @@ class CloseInstanceRequest(BaseModel):
 
 def create_app(runner: BaseRunner, environments: Dict[str, Dict[str, Any]] = {}) -> FastAPI:
     app = FastAPI()
+    started_at = time.time()
 
     @app.post("/start_instance")
     def start_instance(request: StartInstanceRequest):
@@ -68,5 +76,49 @@ def create_app(runner: BaseRunner, environments: Dict[str, Dict[str, Any]] = {})
              raise HTTPException(status_code=404, detail="Instance not found")
         except Exception as e:
             raise HTTPException(status_code=500, detail=str(e))
+
+    @app.get("/stats")
+    def stats(
+        run_id: Optional[str] = Query(None, description="Filter by run ID"),
+        container_name: Optional[str] = Query(None, description="Filter by container name"),
+    ):
+        """
+        Get server statistics with optional filtering.
+        
+        - **run_id**: Filter instances by run ID (partial match supported)
+        - **container_name**: Filter instances by container name (partial match supported)
+        """
+        instances: List[Dict[str, Any]] = []
+        container_counts: Dict[str, int] = {}
+        
+        for rid, instance_data in runner.running_instances.items():
+            # Apply filters
+            if run_id and run_id not in rid:
+                continue
+            if container_name:
+                instance_container = instance_data.get("container_name", "")
+                if container_name not in instance_container:
+                    continue
+            
+            container = instance_data.get("container_name", "unknown")
+            container_counts[container] = container_counts.get(container, 0) + 1
+            instances.append({
+                "run_id": rid,
+                "container_name": container,
+                "created_at": instance_data.get("created_at"),
+                "environment_config": instance_data.get("environment_config", {}),
+            })
+        
+        return {
+            "server_time": time.time(),
+            "uptime_s": time.time() - started_at,
+            "active_instances": len(instances),
+            "total_instances": len(runner.running_instances),
+            "max_resources": runner.max_resources,
+            "allocated_resources": runner.allocated_resources,
+            "available_resources": runner.get_available_resources(),
+            "container_counts": container_counts,
+            "instances": instances,
+        }
 
     return app

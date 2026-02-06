@@ -44,6 +44,10 @@ def main():
 
     app = create_app(runner, environments=environments)
     
+    # Suppress /stats logging
+    from api import EndpointFilter
+    logging.getLogger("uvicorn.access").addFilter(EndpointFilter())
+
     print(f"Starting {args.runner} runner API on port {args.port}...")
     uvicorn.run(app, host="0.0.0.0", port=args.port)
 
