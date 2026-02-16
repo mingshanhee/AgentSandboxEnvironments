@@ -6,7 +6,7 @@ Usage:
 """
 import argparse
 import datetime as dt
-import json
+import json 
 import sys
 import time
 from typing import Any
@@ -44,13 +44,21 @@ def _print_instances(stats: dict[str, Any]) -> None:
         print("No active instances.")
         return
 
-    print("Active instances:")
-    print("  run_id                               container            created_at")
+    # Count instances by container image
+    image_counts: dict[str, int] = {}
     for item in instances:
+        container_image = str(item.get("container_image", ""))
+        image_counts[container_image] = image_counts.get(container_image, 0) + 1
+
+    print("Active instances:")
+    print("run_id\tcontainer\tcreated_at\tupdated_at\tnum_cmd")
+    for item in instances[:10]:
         run_id = str(item.get("run_id", ""))
         container = str(item.get("container_image", ""))
         created_at = _fmt_ts(item.get("created_at"))
-        print(f"  {run_id:36}  {container:18}  {created_at}")
+        updated_at = _fmt_ts(item.get("updated_at"))
+        num_cmd = item.get("num_cmd", 0)
+        print(f"{run_id}\t{container}\t{created_at}\t{updated_at}\t{num_cmd}")
 
 
 def fetch_and_display(url: str, list_instances: bool, raw: bool) -> None:

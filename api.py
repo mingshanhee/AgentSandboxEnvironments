@@ -15,14 +15,7 @@ class StartInstanceRequest(BaseModel):
     run_id: str
     container_image: str
     container_type: str
-    cwd: str = "/"
-    env: Dict[str, str] = {}
-    forward_env: List[str] = []
     timeout: int = 300
-    executable: Optional[str] = None
-    run_args: List[str] = ["--rm"]
-    container_timeout: str = "2h"
-    pull_timeout: int = 120
     resources: Dict[str, Any] = {"instances": 1}
 
 class ExecuteCommandRequest(BaseModel):
@@ -101,6 +94,8 @@ def create_app(runner: BaseRunner) -> FastAPI:
                 "run_id": rid,
                 "container_image": container,
                 "created_at": instance_data.get("created_at"),
+                "updated_at": instance_data.get("updated_at"),
+                "num_cmd": instance_data.get("num_cmd"),
                 "environment_config": instance_data.get("environment_config", {}),
             })
         

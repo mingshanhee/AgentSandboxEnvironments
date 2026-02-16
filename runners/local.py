@@ -1,6 +1,8 @@
-from typing import Any, Dict
 import logging
+import time
+from typing import Any, Dict
 from runners.base import BaseRunner
+
 try:
     from environments import get_environment
 except ImportError:
@@ -37,7 +39,10 @@ class LocalRunner(BaseRunner):
             self.running_instances[run_id] = {
                 "container_image": container_image,
                 "env": env,
-                "resources": needed_resources
+                "resources": needed_resources,
+                "created_at": time.time(),
+                "updated_at": None,
+                "num_cmd": 0
             }
             self._allocate_resources(needed_resources)
             return run_id
@@ -53,12 +58,14 @@ class LocalRunner(BaseRunner):
         env = self.running_instances[run_id]["env"]
         # Assuming env has an execute method as seen in docker.py
         result = env.execute(cmd)
+        self.running_instances[run_id]["num_cmd"] += 1
+        self.running_instances[run_id]["updated_at"] = time.time()
         return result
 
     def close_instance(self, run_id: str) -> None:
         """Closes the local instance."""
         if run_id not in self.running_instances:
-            return
+            raise KeyError(f"Run ID {run_id} not found.")
 
         instance_data = self.running_instances[run_id]
         env = instance_data["env"]
